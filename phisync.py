@@ -8,11 +8,11 @@ def writefile(d, path):
     f.flush()
     return f
 
-def inflate_zip(f):
-    headdir = os.getcwd() + '/head'
+def inflate_zip(path):
+    headdir = os.getcwd() + '\\head'
     if not os.path.exists(headdir):
         os.makedirs(headdir)
-    zipfile.ZipFile(f).extractall(headdir)
+    zipfile.ZipFile(path).extractall(headdir)
     
 def send_data(data, sock=None):
     s = phisock.phi_socket(sock)
@@ -67,8 +67,12 @@ def client_gethead():
     send_data('get_head')
     filename = client_getdata()
     d = client_getdata()
-    f = writefile(d, '.phisync/' + filename)
-    inflate_zip(filename)
+    phid = os.getcwd() + '\\.phisync\\'
+    if not os.path.exists(phid):
+        os.makedirs(phid)
+    path = phid + filename
+    writefile(d, path)
+    inflate_zip(path)
     
 
 def main():

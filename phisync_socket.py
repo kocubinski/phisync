@@ -1,6 +1,6 @@
 import socket, os, yaml, hashlib
 
-SERVER_IP='192.168.1.55'
+SERVER_IP='192.168.1.185'
 SERVER_PORT=9000
 
 class phi_socket:
