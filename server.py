@@ -22,34 +22,34 @@ def send_data(data, sock=None):
         
 def startserver():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('192.168.1.55', 9000))
+    s.bind(('', 9000))
     s.listen(5)
     state = phisock.phi_state()
     print "Ok"
 
-    #while 1:
-    c, a = s.accept()
-    print "Connected: " + str(a)
-    cmd_sock = phisock.phi_socket(c)
-    cmd = cmd_sock.recv_all()
-    
-    if cmd == "push_head":
-        print "Waiting for file..."
+    while 1:
         c, a = s.accept()
-        sock = phisock.phi_socket(c)
-        name = sock.recv_all()
-        c, a = s.accept()
-        sock = phisock.phi_socket(c)
-        data = sock.recv_all() 
-        state.push_head(name, data)
-        
-    elif cmd == "get_head":
-        print "Sending head..."
-        c, a = s.accept()
-        send_data(state.state['head_name'], c)
-        d = open('.phisync/' + state.state['head'], 'rb').read()
-        c, a = s.accept()
-        send_data(d, c)
+        print "Connected: " + str(a)
+        cmd_sock = phisock.phi_socket(c)
+        cmd = cmd_sock.recv_all()
+
+        if cmd == "push_head":
+            print "Waiting for file..."
+            c, a = s.accept()
+            sock = phisock.phi_socket(c)
+            name = sock.recv_all()
+            c, a = s.accept()
+            sock = phisock.phi_socket(c)
+            data = sock.recv_all() 
+            state.push_head(name, data)
+
+        elif cmd == "get_head":
+            print "Sending head..."
+            c, a = s.accept()
+            send_data(state.state['head_name'], c)
+            d = open('.phisync/' + state.state['head'], 'rb').read()
+            c, a = s.accept()
+            send_data(d, c)
 
 def client_getdata():
     s = phisock.phi_socket()
