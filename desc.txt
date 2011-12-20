@@ -1,0 +1,16 @@
+There will be a python server listening on pserver.
+
+Developer will transport a build over, .zip or .msi (.zip initially)
+they will then connect, and send the filename over.
+this will be stored in memory (or a persistent text-file?)
+
+user clients will query the server for the current build, or a
+specific build number.
+the specified build will be transferred over, and unzipped.
+folder: 
+pharmaci/update.exe
+pharmaci/current/ <-- the build
+
+eventually, use pysync for rsync-like syncing.
+
+py2exe for packaging
