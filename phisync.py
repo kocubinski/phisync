@@ -8,11 +8,11 @@ def writefile(d, path):
     f.flush()
     return f
 
-def inflate_zip(path):
-    headdir = os.getcwd() + '\\head'
-    if not os.path.exists(headdir):
-        os.makedirs(headdir)
-    zipfile.ZipFile(path).extractall(headdir)
+def inflate_zip(project, path):
+    projectdir = os.getcwd() + '\\' + project
+    if not os.path.exists(projectdir):
+        os.makedirs(projectdir)
+    zipfile.ZipFile(path).extractall(projectdir)
 
 def server_getsocket(sock):
     c, a = sock.accept()
@@ -28,7 +28,7 @@ def server_getpacket(sock):
         
 def startserver(debugmode):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('', 9000))
+    s.bind(('', phisock.SERVER_PORT))
     s.listen(5)
     state = phisock.phi_state()
 
@@ -90,7 +90,7 @@ def client_gethead(project):
         os.makedirs(phid)
     path = phid + filename
     writefile(d, path)
-    inflate_zip(path)
+    inflate_zip(project, path)
 
 
 def checkname(args):
@@ -99,7 +99,7 @@ def checkname(args):
         return False
     return True
     
-def main():
+def main_cli():
     parser = argparse.ArgumentParser(description='Send/Receive files with PyShare')
     parser.add_argument('-s', dest='server', action='store_true')
     parser.add_argument('-d', dest='debugmode', action='store_true')
@@ -121,5 +121,4 @@ def main():
     
 
 if __name__ == "__main__":
-    #startserver()
-    main()
+    main_cli()

@@ -1,6 +1,6 @@
 import socket, os, yaml, hashlib
 
-SERVER_IP='192.168.1.55'
+SERVER_IP='192.168.1.185'
 SERVER_PORT=9000
 
 class phi_socket:
@@ -44,11 +44,6 @@ class phi_state:
             os.makedirs('.phisync')
         if not os.path.exists(self._state_path):
             f = open(self._state_path, 'w')
-            #f.write("""
-            #        head: none
-            #        head_name: none
-            #        """)
-            #f.flush()
         data = open(self._state_path).read()
         self.state = yaml.load(data)
         if not self.state:
@@ -65,8 +60,6 @@ class phi_state:
         if not project in self.projects:
             self.projects.append(project)
             self.state[project] = dict()
-            #print "Couldn't find project", project
-            #return False
             
         h = hashlib.md5(data).hexdigest()
         path = '.phisync/' + h
