@@ -1,6 +1,6 @@
 import socket, os, yaml, hashlib
 
-SERVER_IP='192.168.1.185'
+SERVER_IP='192.168.1.55'
 SERVER_PORT=9000
 
 class phi_socket:
@@ -38,7 +38,7 @@ def writefile(d, path):
 
 class phi_state:
     _state_path = '.phisync/state'
-    
+     
     def __init__(self):
         if not os.path.exists('.phisync'):
             os.makedirs('.phisync')
@@ -51,19 +51,27 @@ class phi_state:
             f.flush()
         data = open(self._state_path).read()
         self.state = yaml.load(data)
-        if self.state:
-            print "Head is: " + self.state['head'] + self.state['head_name']
+        if not self.state: return
+        
+        self.projects = self.state.keys()
+        print "Head(s):"
+        for proj in self.state:
+            print proj, '-', self.state[proj]['head'], self.state[proj]['head_name']
 
-    def push_head(self, name, data):
+    def push_head(self, project, name, data):
+        if not project in self.projects:
+            print "Couldn't find project", project
+            return False
+            
         h = hashlib.md5(data).hexdigest()
         path = '.phisync/' + h
         writefile(data, path)
+        self.state[project]['head'] = h
+        self.state[project]['head_name'] = name
+        self.write_state()
+        
         print "Finished writing file."
         print "New head: " + h
-        print self.state
-        self.state['head'] = h
-        self.state['head_name'] = name
-        self.write_state()
 
     def write_state(self):
         f = open(self._state_path, 'w')
