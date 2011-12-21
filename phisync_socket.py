@@ -44,14 +44,17 @@ class phi_state:
             os.makedirs('.phisync')
         if not os.path.exists(self._state_path):
             f = open(self._state_path, 'w')
-            f.write("""
-                    head: none
-                    head_name: none
-                    """)
-            f.flush()
+            #f.write("""
+            #        head: none
+            #        head_name: none
+            #        """)
+            #f.flush()
         data = open(self._state_path).read()
         self.state = yaml.load(data)
-        if not self.state: return
+        if not self.state:
+            self.state = dict()
+            self.projects = []
+            return
         
         self.projects = self.state.keys()
         print "Head(s):"
@@ -60,8 +63,10 @@ class phi_state:
 
     def push_head(self, project, name, data):
         if not project in self.projects:
-            print "Couldn't find project", project
-            return False
+            self.projects.append(project)
+            self.state[project] = dict()
+            #print "Couldn't find project", project
+            #return False
             
         h = hashlib.md5(data).hexdigest()
         path = '.phisync/' + h
