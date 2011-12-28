@@ -116,7 +116,7 @@ def main_cli():
         client_pushfile(args.name, args.push)
     elif (args.gethead):
         if not checkname(args): return
-        print "Getting head..."
+        print "Getting current", args.name, "..."
         client_gethead(args.name)
     
 

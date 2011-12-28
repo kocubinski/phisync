@@ -25,11 +25,6 @@ class phi_socket:
         self.sock.sendall(data)
         self.sock.shutdown(socket.SHUT_WR)
         
-    def parse_cmd(self, cmd):
-        if cmd == "push_head":
-            print "Pushing new head..."
-        elif cmd == "sync_head":
-            print "Syncing to current head..."
             
 def writefile(d, path):
     f = open(path, 'wb')
@@ -62,8 +57,10 @@ class phi_state:
             self.state[project] = dict()
             
         h = hashlib.md5(data).hexdigest()
-        path = '.phisync/' + h
-        writefile(data, path)
+        hash_path = '.phisync/' + h
+        name_path = '.phisync/' + name
+        writefile(data, hash_path)
+        writefile(data, name_path)
         self.state[project]['head'] = h
         self.state[project]['head_name'] = name
         self.write_state()
