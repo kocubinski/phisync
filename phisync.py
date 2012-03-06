@@ -2,8 +2,13 @@ import phisync_socket as phisock;
 import argparse, os, yaml, hashlib, socket, zipfile, shutil
 import sys, signal
 
+server_socket = 0
+
 def signal_handler(signal, frame):
-   print 'Exiting gracefully...'
+    global server_socket
+    if server_socket == 0: return
+    print 'Exiting gracefully...'
+    server_socket.close()
 
 signal.signal(signal.SIGINT, signal_handler)
 
@@ -34,15 +39,16 @@ def server_getpacket(sock):
     return s.recv_all()
         
 def startserver(debugmode):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('', phisock.SERVER_PORT))
-    s.listen(5)
+    global server_socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('', phisock.SERVER_PORT))
+    server_socket.listen(5)
     state = phisock.phi_state()
 
-    if (debugmode): server_listen(s, state)
+    if (debugmode): server_listen(server_socket, state)
     else:
         while 1:
-            server_listen(s, state)
+            server_listen(server_socket, state)
     
 def server_listen(s, state):
     c, a = s.accept()
