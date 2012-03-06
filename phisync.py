@@ -1,6 +1,11 @@
 import phisync_socket as phisock;
-import argparse, os, yaml, hashlib, socket, zipfile
+import argparse, os, yaml, hashlib, socket, zipfile, shutil
+import sys, signal
 
+def signal_handler(signal, frame):
+   print 'Exiting gracefully...'
+
+signal.signal(signal.SIGINT, signal_handler)
 
 def writefile(d, path):
     f = open(path, 'wb')
@@ -10,7 +15,9 @@ def writefile(d, path):
 
 def inflate_zip(project, path):
     projectdir = os.getcwd() + '\\' + project
-    if not os.path.exists(projectdir):
+    if os.path.exists(projectdir):
+        shutil.rmtree(projectdir)
+    else:
         os.makedirs(projectdir)
     zipfile.ZipFile(path).extractall(projectdir)
 
@@ -84,12 +91,14 @@ def client_gethead(project):
     client_sendpacket('get_head')
     client_sendpacket(project)
     filename = client_getpacket()
+    print "Receiving", filename, "..."
     d = client_getpacket()
     phid = os.getcwd() + '\\.phisync\\'
     if not os.path.exists(phid):
         os.makedirs(phid)
     path = phid + filename
     writefile(d, path)
+    print "Inflating archive..."
     inflate_zip(project, path)
 
 
